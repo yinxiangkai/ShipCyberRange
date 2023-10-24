@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yongle.springboot.mapper.PortMapper">
+    <insert id="insertGetId" useGeneratedKeys="true" keyProperty="id" parameterType="com.yongle.springboot.entity.Port">
+        insert into port(name,network_id,subnet_id,ipaddr,port,status)
+        values(#{name},#{networkId},#{subnetId},#{ipaddr},#{port},#{status})
+    </insert>
+
+    <select id="findPage" resultType="com.yongle.springboot.entity.Port">
+        select port.*,subnet.name as subnet,network.name as network from port
+        left join subnet
+        on  port.subnet_id =subnet.id
+        left join network
+        on port.network_id=network.id
+        <where>
+            <if test="networkid!=null and networkid!=''">
+                and port.network_id=#{networkid}
+            </if>
+            <if test="status!=null and status!=''">
+                and port.status=#{status}
+            </if>
+            <if test="ipaddr!=null and ipaddr!=''">
+                and port.ipaddr like concat('%',#{ipaddr},'%')
+            </if>
+        </where>
+
+    </select>
+</mapper>

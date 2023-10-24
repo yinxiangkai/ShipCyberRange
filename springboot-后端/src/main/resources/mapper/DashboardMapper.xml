@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yongle.springboot.mapper.DashboardMapper">
+
+    <select id="getUseNumber" resultType="com.yongle.springboot.entity.Dashboard">
+        SELECT SUM(flavor.disk) AS disk,SUM(flavor.vcpus)AS cpu, SUM(flavor.ram)AS ram
+        FROM `host`
+                 left JOIN flavor ON host.flavor_id = flavor.id;
+    </select>
+    <select id="getAddNumber" resultType="com.yongle.springboot.entity.Dashboard">
+        SELECT SUM(flavor.disk) AS disk,SUM(flavor.vcpus)AS cpu, SUM(flavor.ram)AS ram
+        FROM rangce_host
+                 left JOIN flavor ON rangce_host.flavor_id = flavor.id
+        <where>
+           rangce_host.rangce_id=#{rangceId}
+        </where>
+
+    </select>
+</mapper>

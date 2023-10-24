@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yongle.springboot.mapper.CommentMapper">
+
+    <select id="findCommentDetail" resultType="com.yongle.springboot.entity.Comment">
+        select comment.* ,user.nickname as nickname ,user.avatarurl as avatarurl
+        from comment
+        left join user
+        on comment.user_id=user.uid
+        <where>
+            <if test="rangceId!=null and rangceId!=''">
+                and comment.rangce_id=#{rangceId}
+            </if>
+        </where>
+    </select>
+</mapper>

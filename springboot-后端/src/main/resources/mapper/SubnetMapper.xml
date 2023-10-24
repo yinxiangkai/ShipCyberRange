@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yongle.springboot.mapper.SubnetMapper">
+    <insert id="insertGetId" useGeneratedKeys="true" keyProperty="id" parameterType="com.yongle.springboot.entity.Subnet">
+        insert into subnet(name,networkid,subnetid,cidr,gateway,version,network)
+        values(#{name},#{networkid},#{subnetid},#{cidr},#{gateway},#{version},#{network})
+
+    </insert>
+
+    <select id="getOne" resultType="com.yongle.springboot.entity.Subnet">
+        select subnet.* from subnet
+        WHERE subnet.id=(SELECT host.subnet_id from host WHERE host.rangce_id=#{rangceId} and host.user_id=#{userId} LIMIT 1)
+    </select>
+</mapper>

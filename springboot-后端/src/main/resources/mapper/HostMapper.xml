@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yongle.springboot.mapper.HostMapper">
+
+    <insert id="insertGetId" useGeneratedKeys="true" keyProperty="id" parameterType="com.yongle.springboot.entity.Host">
+        insert into host(name,createtime,status,flag,grade,type,rangce_id,group_id)
+        values(#{name},#{createtime},#{status},#{flag},#{grade},#{type},#{rangceId},#{groupId})
+    </insert>
+
+    <select id="findpage" resultType="com.yongle.springboot.entity.Host">
+        select host.*,user.username as userName,subnet.name as subnetName,rangce.name as rangceName,rangce_group.no as no from host
+        left join user
+        on  host.user_id=user.uid
+        left join subnet
+        on host.subnet_id=subnet.id
+        left join rangce
+        on host.rangce_id=rangce.id
+        left join rangce_group
+        on host.group_id=rangce_group.id
+        <where>
+            <if test="name!=null and name!=''">
+                and host.name like concat('%',#{name},'%')
+            </if>
+            <if test="userName!=null and userName!=''">
+                and user.username like concat('%',#{userName},'%')
+            </if>
+            <if test="rangceName!=null and rangceName!=''">
+                and rancge.name like concat('%',#{rangceName},'%')
+            </if>
+            <if test="subnetName!=null and subnetName!=''">
+                and subnet.name like concat('%',#{subnetName},'%')
+            </if>
+            <if test="no!=null and no!=''">
+                and rangce_group.no like concat('%',#{no},'%')
+            </if>
+            <if test="ipaddr!=null and ipaddr!=''">
+                and port.ipaddr like concat('%',#{ipaddr},'%')
+            </if>
+        </where>
+
+
+
+    </select>
+
+    <resultMap id="hostDetial" type="com.yongle.springboot.entity.Host">
+        <result column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="status" property="status" />
+        <result column="createtime" property="createtime" />
+        <result column="userName" property="userName" />
+        <result column="rangceName" property="rangceName" />
+        <result column="no" property="no" />
+        <result column="number" property="number" />
+        <collection property="port" javaType="java.util.Objects" ofType="com.yongle.springboot.entity.Port">
+            <result column="portName" property="name" />
+            <result column="IP" property="ipaddr" />
+            <result column="subnetName" property="subnet" />
+            <result column="networkName" property="network" />
+        </collection>
+        <collection property="flavor" javaType="java.util.Objects" ofType="com.yongle.springboot.entity.Flavor">
+            <result column="flavorName" property="name" />
+            <result column="ram" property="ram" />
+            <result column="vcpus" property="vcpus" />
+            <result column="disk" property="disk" />
+        </collection>
+        <collection property="img" javaType="java.util.Objects" ofType="com.yongle.springboot.entity.Img">
+            <result column="imgName" property="name" />
+            <result column="discription" property="discription" />
+        </collection>
+    </resultMap>
+    <select id="findone" resultMap="hostDetial">
+        select host.*,port.name as portName,port.ipaddr as IP,subnet.name as subnetName,network.name as networkName ,
+        flavor.name as flavorName,flavor.ram as ram,flavor.vcpus as vcpus, flavor.disk as disk,img.name as imgName,
+        img.discription as discription,user.username as userName,rangce.name as rangceName ,rangce_group.no as no from host
+        left join port
+        on host.port_id=port.id
+        left join flavor
+        on host.flavor_id=flavor.id
+        left join img
+        on host.image_id=img.id
+        left join network
+        on port.network_id=network.id
+        left join subnet
+        on port.subnet_id=subnet.id
+        left join user
+        on host.user_id=user.uid
+        left join rangce
+        on host.rangce_id=rangce.id
+        left join rangce_group
+        on host.group_id=rangce_group.id
+        <where>
+            <if test="id!=null and id !=''">
+              host.id=#{id}
+            </if>
+        </where>
+
+    </select>
+</mapper>

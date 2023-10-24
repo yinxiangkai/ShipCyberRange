@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yongle.springboot.mapper.NetworkMapper">
+
+    <insert id="insertGetId" useGeneratedKeys="true" keyProperty="id" parameterType="com.yongle.springboot.entity.Network">
+        insert into network(name,time,status,network_id)
+        values(#{name},#{time},#{status},#{networkId})
+    </insert>
+</mapper>

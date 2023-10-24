@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yongle.springboot.mapper.RangceGroupMapper">
+    <insert id="insertGetId" useGeneratedKeys="true" keyProperty="id" parameterType="com.yongle.springboot.entity.RangceGroup">
+        insert into rangce_group(no,rangce_id,user_id,apply_time,status)
+        values(#{no},#{rangceId},#{userId},#{applyTime},#{status})
+    </insert>
+
+    <select id="findpage" resultType="com.yongle.springboot.entity.RangceGroup">
+        select rangce_group.*,(select SUM(rangce_host.grade)  from rangce
+        left join rangce_host ON rangce.id=rangce_host.rangce_id
+        GROUP BY rangce.id)as grade,rangce.name as rangceName,user.username as userName, SUM(flag.grade) as myGrade
+        from rangce_group
+        left join rangce
+        on rangce_group.rangce_id=rangce.id
+        left join user
+        on rangce_group.user_id=user.uid
+        left  join flag
+        on rangce_group.user_id=flag.user_id and rangce_group.rangce_id=flag.rangce_id
+        <where>
+            <if test="no!=null and no!=''">
+               no=#{no}
+            </if>
+            <if test="userId!=null and userId!=''">
+                rangce_group.user_id=#{userId}
+            </if>
+            <if test="rangce_id!=null and rangce_id!=''">
+            and rangce_group.rangce_id=#{rangce_id}
+            </if>
+            <if test="rangceName!=null and rangceName!=''">
+            and rangce.name like concat('%',#{rangceName},'%')
+            </if>
+        </where>
+        GROUP BY rangce_group.id
+
+    </select>
+    <select id="findOne" resultType="com.yongle.springboot.entity.RangceGroup">
+        select rangce_group.* from rangce_group
+        where rangce_group.user_id =0
+        and rangce_group.rangce_id=#{rangceId}
+    </select>
+    <select id="selectmyList" resultType="java.lang.Integer">
+        SELECT rangce_group.no FROM rangce_group
+        <where>
+             rangce_group.no IS NOT NULL and rangce_group.rangce_id=#{rangceId}
+        </where>
+         ORDER BY rangce_group.no ASC
+    </select>
+
+</mapper>

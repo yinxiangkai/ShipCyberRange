@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yongle.springboot.mapper.RangceHostMapper">
+
+    <select id="selectRangceHostList" resultType="com.yongle.springboot.entity.RangceHost">
+        select rangce_host.*,host.ipaddr as ipaddr from rangce_host
+        left join host
+        on  rangce_host.rangce_id =host.rangce_id and rangce_host.number=host.number
+        left join flag
+        on  rangce_host.rangce_id =flag.rangce_id and rangce_host.number=flag.number
+        <where>
+            (rangce_host.number =0 and rangce_host.rangce_id=#{rangceId}) OR (rangce_host.rangce_id=2 and flag.user_id=#{userId})
+        </where>
+        ORDER BY number
+    </select>
+    <select id="selectDownList" resultType="com.yongle.springboot.entity.RangceHost">
+        select rangce_host.* from rangce_host
+        left join flag
+        on  rangce_host.rangce_id =flag.rangce_id and rangce_host.number=flag.number
+        <where>
+            rangce_host.rangce_id=2 and flag.user_id=34 and  rangce_host.type=1
+        </where>
+
+
+    </select>
+</mapper>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yongle.springboot.mapper.RangceMapper">
+
+    <select id="findPage" resultType="com.yongle.springboot.entity.Rangce">
+        select rangce.* ,SUM(rangce_host.grade) as grade from rangce
+        left join rangce_host ON rangce.id=rangce_host.rangce_id
+        GROUP BY id
+        <where>
+            <if test="name!=null and name!=''">
+                and rangce.name like concat('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+</mapper>

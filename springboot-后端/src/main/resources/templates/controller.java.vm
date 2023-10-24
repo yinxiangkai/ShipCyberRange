@@ -1,0 +1,93 @@
+package ${package.Controller};
+
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.springframework.web.bind.annotation.*;
+import javax.annotation.Resource;
+import java.util.List;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.yongle.springboot.common.Result;
+
+import ${package.Service}.${table.serviceName};
+import ${package.Mapper}.${table.mapperName};
+import ${package.Entity}.${entity};
+
+#if(${restControllerStyle})
+import org.springframework.web.bind.annotation.RestController;
+#else
+import org.springframework.stereotype.Controller;
+#end
+#if(${superControllerClassPackage})
+import ${superControllerClassPackage};
+#end
+
+/**
+ * <p>
+ * $!{table.comment} 前端控制器
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+#if(${restControllerStyle})
+@RestController
+#else
+@Controller
+#end
+@RequestMapping("#if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end")
+#if(${kotlin})
+class ${table.controllerName}#if(${superControllerClass}) : ${superControllerClass}()#end
+
+#else
+#if(${superControllerClass})
+public class ${table.controllerName} extends ${superControllerClass} {
+#else
+public class ${table.controllerName} {
+#end
+
+    @Resource
+    private ${table.serviceName} ${table.entityPath}Service;
+    @Resource
+    private ${table.mapperName} ${table.entityPath}Mapper;
+
+    // 新增或者更新
+    @PostMapping("/save")
+    public Result save(@RequestBody ${entity} ${table.entityPath}) {
+
+        if ( ${table.entityPath}.getId() == null) {
+         ${table.entityPath}Mapper.insert(${table.entityPath});
+        return Result.success(null,"新增成功");
+        }else{
+         ${table.entityPath}Mapper.updateById(${table.entityPath});
+        return Result.success(null,"更新成功");
+        }
+        }
+
+    @DeleteMapping("/del/{id}")
+    public Result delete(@PathVariable Integer id) {
+        ${table.entityPath}Service.removeById(id);
+        return Result.success(null,"删除成功");
+    }
+
+    @PostMapping("/del/batch")
+    public Result deleteBatch(@RequestBody List<Integer> ids) {
+        ${table.entityPath}Service.removeByIds(ids);
+        return Result.success();
+    }
+
+
+
+    @GetMapping("/page")
+    public Result findPage( @RequestParam(defaultValue = "") String name,
+                            @RequestParam Integer pageNum,
+                            @RequestParam Integer pageSize) {
+        QueryWrapper<${entity}> queryWrapper = new QueryWrapper<>();
+        if (!"".equals(name)) {
+        queryWrapper.like("name", name);
+        }
+        return Result.success(${table.entityPath}Service.page(new Page<>(pageNum, pageSize), queryWrapper));
+    }
+
+}
+
+#end
